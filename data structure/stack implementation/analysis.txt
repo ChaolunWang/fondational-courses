@@ -1,0 +1,19 @@
+The implementation of clear() function in stack is like this:
+
+
+template <typename T>
+
+void Stack<T>::clear()
+
+
+{
+
+    data.clear();
+
+}
+
+ 
+which called the clear() function of STL vector class once.
+
+According to the information from cpluspuls.com(http://www.cplusplus.com/reference/vector/vector/clear/):
+The clear() function can remove and destory all elements from the vector, and it grows linearly as the size of vector grows. This means the complexity of clear() function in vector have the complexity of O(n), thus the clear() function in stack is also have a complexity O(n) since it only call the clear() in vector once.

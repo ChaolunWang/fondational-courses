@@ -1,0 +1,19 @@
+The complexity of makeEmpty is O(N) given that there are N nodes.
+Reason:
+The implementation of makeEmpty() function is like this:
+void BET::makeEmpty(BinaryNode* &t)   
+{
+	if(t!=nullptr)
+	{
+		makeEmpty(t->left);
+		makeEmpty(t->right);
+		delete t;
+	}
+	t=nullptr;
+}
+This recursive function will visit each of the node and delete it, if it is 
+not the nullptr, so the number of times the makeEmpty() function is called= N+
+the number of nullptr, which is N+1 in worst case. So the makeEmpty() function
+will be called 2N+1 time in total; since the cost of the non-recursive part of 
+makeEmpty function is constant as the N grows, the complexity of makeEmpty() 
+function is C*(2N+1), which is O(N).

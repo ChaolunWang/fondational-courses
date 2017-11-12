@@ -1,0 +1,98 @@
+Analyze the complexity of reverse function.
+
+Suppose the list have the size n.
+The function is like this:
+
+template <typename T>
+void List<T>::reverse() 
+{
+        List temp= *this;                                    //called copy constructor 1 time
+	clear();                                             //called clear() 1 time
+	for(auto i: temp)                                    //called push_front n times
+		push_front(i);
+}
+
+The following are functions in List<T> class which have been called directly or indirectly by reverse(), to symplify the problem,
+ the function from the iterator/const_iterator class and Node(such as the constructor) have not been counted,since they 
+only related to the unit of List, which is Node, and therefore do not influence the increasing rate of time when the number
+of nodes in the list is growing. The function begin() and end() also haven't been counted since their function is just return 
+a value.
+
+template <typename T>                                        //the copy constructor of List<T>
+List<T>::List(const List &rhs)
+{
+	init();                                              //called the init() 1 time
+	for(auto & i:rhs)                                    //called push_back n times
+		push_back(i);                               
+}
+
+template <typename T>
+void List<T>::init()                                         //the init() function
+{
+	theSize=0;                                           //total operation atomics: 5
+	head= new Node;
+	tail= new Node;
+	head->next=tail;
+	tail->prev=head;
+}
+
+void List<T>::push_back(const T & val)                       //the push_back() function
+{
+	insert(end(), val);                                  //called insert() 1 time
+}
+
+template <typename T>
+void List<T>::push_front(const T & val)                       //the push_frout() function
+{
+	insert(begin(), val);                                 //called insert() 1 time
+}
+
+template <typename T>
+void List<T>::clear()                                        //the clear() function
+{
+	while(theSize)                                       //called pop_back() n time
+		pop_back();
+}
+
+void List<T>::pop_back()                                     //the pop_back() function
+{
+	erase(--end());                                      //have 1 operation, then called erase
+}
+
+
+template <typename T>
+typename List<T>::iterator List<T>::erase(iterator itr)      //function erase()
+{
+	--theSize;                                           // 7 operation atomics   
+	Node *itrNode=itr.current;
+	iterator ret(itrNode->next);
+	itrNode->prev->next=itrNode->next;
+	itrNode->next->prev=itrNode->prev;
+	delete itrNode;
+	return ret;
+}
+	
+
+void List<T>::push_front(const T & val)                     //function push_front()
+{                                                           //called insert() 1 time
+	insert(begin(), val);
+}
+
+
+template <typename T>                   
+typename List<T>::iterator List<T>::insert(iterator itr, const T& val)    //function insert();
+{
+	++theSize;                                            //total 9 operation atomics
+	Node *itrNode=itr.current;
+	Node *tempNode=new Node;
+	tempNode->data=val;
+	tempNode->prev=itrNode->prev;
+	tempNode->next=itrNode;
+	itrNode->prev->next=tempNode;
+	itrNode->prev=tempNode;
+	return iterator(itrNode->prev);
+}
+
+
+
+So the complexity=O(1*(5+n*(1*9)) +1*(n*(1+(1*7)))+n*(1*9) )=O(n)
